@@ -7,9 +7,9 @@ const Sidebar = ({ categories = [] }) => {
       <ul>
         {categories.length > 0 ? (
           categories.map((category) => (
-            <li key={category.name} className="mb-2">
-              <Link href={`#${category.name.toLowerCase()}`}>
-                <a className="hover:text-gray-400">{category.name}</a>
+            <li key={category.guid} className="mb-2">
+              <Link href={`#${category.guid.toLowerCase()}`}>
+                <a className="hover:text-gray-400">{category.guid}</a>
               </Link>
             </li>
           ))
