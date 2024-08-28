@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export async function fetchGamesData() {
   try {
-    const response = await axios.get('https://api.lokisurf.com/api/games');
+    const response = await axios.get('https://lokisurf.com/api/games');
     return response.data;
   } catch (error) {
     console.error("Error fetching data:", error.message);
@@ -12,7 +12,7 @@ export async function fetchGamesData() {
 
 export async function fetchGameById(guid) {
   try {
-    const response = await axios.get(`https://api.lokisurf.com/api/games/${guid}`);
+    const response = await axios.get(`https://lokisurf.com/api/games/${guid}`);
     return response.data;
   } catch (error) {
     console.error("Error fetching game by ID:", error.message);
@@ -22,7 +22,7 @@ export async function fetchGameById(guid) {
 
 export async function fetchRelatedGames(guid) {
   try {
-    const response = await axios.get(`https://api.lokisurf.com/api/related-games/${guid}`);
+    const response = await axios.get(`https://lokisurf.com/api/related-games/${guid}`);
     return response.data;
   } catch (error) {
     console.error("Error fetching related games:", error.message);
