@@ -64,7 +64,7 @@ export default function Home() {
          
         </>
       ) : (
-        <p className="text-white">No games available</p>
+        <p className="text-white"></p>
       )}
     </Layout>
   );
