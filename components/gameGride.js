@@ -2,17 +2,7 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import Head from "next/head";
 
-const getRandomColor = () => {
-  const letters = '0123456789ABCDEF';
-  let color = '#';
-  for (let i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)];
-  }
-  return color;
-};
-
 const GameGrid = ({ games }) => {
-  const [bgColor, setBgColor] = useState(getRandomColor());
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -25,8 +15,7 @@ const GameGrid = ({ games }) => {
   }, []);
 
   return (
-    <div className="relative">
-   
+    <div className="relative ">
       {loading ? (
         <div className="flex justify-center items-center h-[60vh]">
           {/* Loading Animation */}
@@ -34,15 +23,15 @@ const GameGrid = ({ games }) => {
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-9 gap-4 p-4">
-          <div className="absolute bg-white rounded-lg flex flex-col items-center lg:w-[10vw] xl:w-[10vw] xl:h-[20vh] lg:h-[20vh] w-[40vw] h-[20vh] shadow-lg">
+          <div className="bg-white rounded-lg flex flex-col items-center lg:w-[10vw] xl:w-[8vw] xl:h-[16vh] lg:h-[20vh] w-[40vw] h-[20vh] shadow-lg">
             <div className="flex justify-center">
               <Link href="/">
-                <img src="/lokisurf.png" alt="Loki Surf Logo" className="object-cover h-[10vh]" />
+                <img src="/lokisurf.png" alt="Loki Surf Logo" className="object-cover h-[8vh]" />
               </Link>
             </div>
 
             {/* Loki Surf Text */}
-            <div className="text-center text-gray-800 xl:mt-[-10px] lg:mt-[-10px] font-semibold">
+            <div className="text-center text-gray-800 xl:mt-[-10px] lg:mt-[-15px] font-semibold">
               Loki Surf
             </div>
 
@@ -50,7 +39,7 @@ const GameGrid = ({ games }) => {
             <hr className="w-full border-t-2 border-gray-300 my-2" />
 
             {/* Icons for Home and Search */}
-            <div className="w-full flex justify-around mt-2">
+            <div className="w-full flex justify-around">
               <div>
                 <Link href="/">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-blue-500" viewBox="0 0 24 24" fill="currentColor">
@@ -69,12 +58,9 @@ const GameGrid = ({ games }) => {
           </div>
 
           {games.map((game, index) => (
-
-
             <Link key={index} href={`/game/${game.guid}`}>
               <div
-                className={`relative p-1 rounded-lg overflow-hidden shadow-md transform transition-all duration-300 hover:scale-105 ${index % 7 === 0 ? 'col-span-2 row-span-2' : ''
-                  }`}
+                className={`relative p-1 rounded-lg overflow-hidden shadow-md transform transition-transform duration-300 ${index % 7 === 0 ? 'col-span-2 row-span-2' : ''} hover:scale-105 hover:rotate-3d`}
               >
                 <div
                   className="absolute bottom-0 left-0 right-0 inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white text-center opacity-0 hover:opacity-100 transition-opacity duration-300"
@@ -91,6 +77,24 @@ const GameGrid = ({ games }) => {
           ))}
         </div>
       )}
+      {/* Add this style to your global CSS file or in a <style jsx> block */}
+      <style jsx>{`
+        .rotate-3d {
+          transform: rotateY(0deg) rotateX(0deg);
+          transition: transform 0.5s ease-in-out;
+        }
+        .hover\\:rotate-3d:hover {
+          transform: rotateY(15deg) rotateX(15deg);
+        }
+        @keyframes backgroundAnimation {
+          0% { background-color: #ffffff; }
+          50% { background-color: #f0f0f0; }
+          100% { background-color: #ffffff; }
+        }
+        .hover\\:animate-background:hover {
+          animation: backgroundAnimation 1s ease-in-out infinite;
+        }
+      `}</style>
     </div>
   );
 };

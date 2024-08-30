@@ -4,7 +4,7 @@ import Layout from './layout';
 import GameGrid from '../components/gameGride';
 import { fetchGamesData } from '../services/gameService';
 import Pagination from '../components/pagination';
-
+import Footer from '../components/footer/footer'
 export default function Home() {
   const [games, setGames] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -66,6 +66,7 @@ export default function Home() {
       ) : (
         <p className="text-white"></p>
       )}
+      <Footer/>
     </Layout>
   );
 }
