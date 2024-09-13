@@ -19,8 +19,8 @@ const Header = () => {
     const fetchCategoriesAndGames = async () => {
       try {
         const [categoriesResponse, gamesResponse] = await Promise.all([
-          axios.get('https://psychic-space-waffle-vg449wqrqx7c6p45-8001.app.github.dev/api/categories'),
-          axios.get('https://psychic-space-waffle-vg449wqrqx7c6p45-8001.app.github.dev/api/games')
+          axios.get('https://api.lokisurf.com/api/categories'),
+          axios.get('https://api.lokisurf.com/api/games')
         ]);
 
         setCategories(categoriesResponse.data);
@@ -73,7 +73,7 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-purple-900 h-[12vh] pr-2 relative">
+    <header className="bg-purple-900 h-[12vh] pr-2 fixed top-0 left-0 right-0 z-50">
       <div className="container mx-auto flex justify-between items-center lg:space-x-4">
         {/* Logo */}
         <div className="flex items-center">
@@ -185,7 +185,7 @@ const Header = () => {
               </nav>
             </div>
             <div className="mt-8">
-              <p className="text-center">Site Name</p>
+              <p className="text-center">Loki Surf</p>
               {/* Add social media icons here */}
             </div>
             <button onClick={handleSidebarToggle} className="absolute top-4 right-4 text-red-500">

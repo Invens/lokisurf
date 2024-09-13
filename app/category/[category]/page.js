@@ -15,7 +15,7 @@ const CategoryPage = () => {
   useEffect(() => {
     const fetchGamesByCategory = async () => {
       try {
-        const response = await axios.get('https://psychic-space-waffle-vg449wqrqx7c6p45-8001.app.github.dev/api/games');  // Fetch all games
+        const response = await axios.get('https://api.lokisurf.com/api/games');  // Fetch all games
         const allGames = response.data;
         const filteredGames = allGames.filter(game => game.category === category); // Filter games by category
         setGames(filteredGames);  // Set filtered games in state
@@ -32,7 +32,7 @@ const CategoryPage = () => {
   return (
     <>
     <Header/>
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative mt-[150px]">
     <div className="mt-4 top-4 left-4 bg-gray-500 text-white px-4 py-2 rounded-lg shadow-lg">
         <h1 className="text-xl font-semibold">Games in: {category}</h1>
       </div>

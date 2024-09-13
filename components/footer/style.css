@@ -1,18 +1,21 @@
+/* General body styles */
 /* body {
     margin: 0;
     padding: 0;
     background: skyblue;
-  } */
-  
-  .waves {
+} */
+
+/* Waves styling */
+.waves {
     position: absolute;
     bottom: 0;
     left: 0;
     height: 50vh;
     width: 100%;
-  }
-  
-  .waves:after {
+    z-index: 1; /* Waves behind the logo and footer content */
+}
+
+.waves:after {
     content: '';
     display: block;
     position: absolute;
@@ -21,80 +24,82 @@
     bottom: -100px;
     height: 100px;
     background: dodgerblue;
-  }
-  
-  .waves svg {
+}
+
+.waves svg {
     position: absolute;
     bottom: 0;
     left: 0;
-  }
-  
-  .waves use {
-    animation: wavewave 5s cubic-bezier(.55,.5,.45,.5) infinite;
+}
+
+.waves use {
+    animation: wavewave 5s cubic-bezier(.55, .5, .45, .5) infinite;
     fill: dodgerblue;
     opacity: 0.7;
-  }
-  
-  .waves.back use:nth-child(2) {
+}
+
+.waves.back use:nth-child(2) {
     animation-delay: -4s;
     animation-duration: 13s;
-  }
-  .waves.back use:nth-child(3) {
+}
+
+.waves.back use:nth-child(3) {
     animation-delay: -5s;
     animation-duration: 20s;
-  }
-  
-  .waves.front use:nth-child(2) {
+}
+
+.waves.front use:nth-child(2) {
     animation-delay: -2s;
     animation-duration: 7s;
-  }
-  .waves.front use:nth-child(3) {
+}
+
+.waves.front use:nth-child(3) {
     animation-delay: -3s;
     animation-duration: 10s;
-  }
-  
-  @keyframes wavewave {
+}
+
+@keyframes wavewave {
     0% {
-      transform: translateX(-90px);
+        transform: translateX(-90px);
     }
     100% {
-      transform: translateX(85px);
+        transform: translateX(85px);
     }
-  }
-  
-  /* Logo animation (same as boat) */
-  .logo {
-    position: fixed;
-    bottom: 0px;
-    left: 10vw;
-    z-index: 1002;
+}
+
+/* Logo styling */
+.logo {
+    position: absolute;
+    bottom: 5%; /* Adjust as needed */
+    left: 50%; /* Center horizontally */
+    transform: translateX(-50%); /* Center horizontally */
+    z-index: 2; /* Ensure logo is above the waves but below footer content */
     display: inline-block;
-    transform-origin: center bottom;
     animation: bob 5s ease-in-out alternate infinite;
-  }
-  
-  .moving-logo {
+}
+
+.moving-logo {
     width: 25vw; /* Adjust the size of the logo */
-  }
-  
-  @keyframes bob {
+}
+
+@keyframes bob {
     0% {
-      transform: rotate(-10deg) translateY(0vh);
+        transform: rotate(-10deg) translateY(0vh);
     }
     100% {
-      transform: rotate(8deg) translateY(-20vh);
+        transform: rotate(8deg) translateY(-20vh);
     }
-  }
-  
-  @media (prefers-color-scheme: dark) {
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
     body {
-      background: midnightblue;
+        background: midnightblue;
     }
     .waves:after {
-      background: royalblue;
+        background: royalblue;
     }
     .waves use {
-      fill: royalblue;
+        fill: royalblue;
     }
-  }
-  
+}

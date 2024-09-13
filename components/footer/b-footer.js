@@ -1,19 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import './style.css';
 import Image from "next/image";
 
 const BFooter = () => {
   const [logoPosition, setLogoPosition] = useState(0); // Initial position
 
-  // Function to move logo left
-  const moveLeft = () => {
-    setLogoPosition((prev) => (prev - 10 >= 0 ? prev - 10 : 0)); // Ensure it doesn't move too far left
-  };
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.keyCode === 37) { // Left arrow
+        setLogoPosition((prev) => (prev - 10 >= 0 ? prev - 10 : 0)); // Ensure it doesn't move too far left
+      }
+      if (e.keyCode === 39) { // Right arrow
+        setLogoPosition((prev) => (prev + 10 <= 90 ? prev + 10 : 90)); // Ensure it doesn't move too far right
+      }
+    };
 
-  // Function to move logo right
-  const moveRight = () => {
-    setLogoPosition((prev) => (prev + 10 <= 90 ? prev + 10 : 90)); // Ensure it doesn't move too far right
-  };
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
 
   return (
     <footer className="relative bg-white w-full mt-[100px] pt-[150px] overflow-hidden">
@@ -49,10 +56,8 @@ const BFooter = () => {
         <div
           className="logo"
           style={{
-            position: "absolute",
             left: `${logoPosition}%`, // Set position based on state
-            bottom: "5px",
-            zIndex: "100px",
+            zIndex: 2, // Ensure logo is above the waves
             transition: "left 0.1s ease",
           }}
         >
@@ -60,12 +65,8 @@ const BFooter = () => {
             src="/lokisurf.png"
             alt="Logo"
             className="moving-logo"
-            style={{ width: "150px" }}
           />
         </div>
-
-        {/* Buttons to move the logo */}
-    
       </div>
 
       {/* Footer content */}

@@ -33,7 +33,7 @@ const GameGrid = ({ games }) => {
   const gridGames = games.slice(10);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative mt-[100px]">
       {loading ? (
         <div className="flex justify-center items-center h-[60vh]">
           {/* Loading Animation */}
@@ -42,7 +42,7 @@ const GameGrid = ({ games }) => {
       ) : (
         <>
           {/* Slider for mobile view */}
-          <div className="block lg:hidden">
+          <div className="mt-[150px] block lg:hidden">
             <Slider {...sliderSettings}>
               {sliderGames.map((game, index) => (
                 <Link key={index} href={`/game/${game.guid}`}>
