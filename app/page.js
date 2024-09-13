@@ -4,7 +4,9 @@ import Layout from './layout';
 import GameGrid from '../components/gameGride';
 import { fetchGamesData } from '../services/gameService';
 import Pagination from '../components/pagination';
+import Header from '@/components/header/page';
 import Footer from '../components/footer/footer'
+import Bfooter from '@/components/footer/b-footer';
 export default function Home() {
   const [games, setGames] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -47,7 +49,11 @@ export default function Home() {
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
+    <>
+    <div>
+     
     <Layout>
+    <Header/>
       {games.length > 0 ? (
         <>
           <GameGrid
@@ -68,5 +74,9 @@ export default function Home() {
       )}
       <Footer/>
     </Layout>
+    </div>
+<Bfooter/>
+    </>
+
   );
 }

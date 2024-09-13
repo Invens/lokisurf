@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { fetchGameById, fetchRelatedGames } from "../../../services/gameService";
 import Link from 'next/link';
 import Head from "next/head";
-
+import Bfooter from "@/components/footer/b-footer";
 // const getRandomColor = () => {
 //   const letters = '0123456789ABCDEF';
 //   let color = '#';
@@ -235,6 +235,7 @@ const GamePage = () => {
       </div>
     </div>
      )}
+     
     </>
   );
 };

@@ -36,6 +36,20 @@ app.get('/api/games/:guid', async (req, res) => {
     res.status(500).send('Error fetching data');
   }
 });
+// Endpoint to get all unique categories
+app.get('/api/categories', async (req, res) => {
+  try {
+    const response = await axios.get('https://h5games.online/freegames.json');
+    const games = response.data;
+
+    // Extract unique categories from the games list
+    const categories = [...new Set(games.map(game => game.category))];
+
+    res.json(categories); // Send the unique categories as a response
+  } catch (error) {
+    res.status(500).send('Error fetching categories');
+  }
+});
 
 // Endpoint to get related games by category or tags
 app.get('/api/related-games/:guid', async (req, res) => {

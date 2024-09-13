@@ -1,9 +1,10 @@
-"use client"
-import { Inter } from "next/font/google";
+"use client";
+import { Audiowide } from "next/font/google"; // Import Audiowide font
 import "./globals.css";
 import { useState } from "react";
 import Sidebar from "@/components/Sidebar";
-
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 
 const getRandomColor = () => {
   const letters = '0123456789ABCDEF';
@@ -13,22 +14,20 @@ const getRandomColor = () => {
   }
   return color;
 };
-const inter = Inter({ subsets: ["latin"] });
 
-
+// Use Audiowide font
+const audiowide = Audiowide({ subsets: ["latin"], weight: "400" });
 
 export default function RootLayout({ children }) {
   const [bgColor, setBgColor] = useState(getRandomColor());
 
   return (
     <html lang="en">
-      <body className={inter.className} style={{ backgroundColor: bgColor }} >
-        
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      {children}
-    </div>
-        
-        </body>
+      <body className={audiowide.className} style={{ backgroundColor: bgColor }}>
+        <div>
+          {children}
+        </div>
+      </body>
     </html>
   );
 }
