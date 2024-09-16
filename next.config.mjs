@@ -2,7 +2,18 @@
 const nextConfig = {
   reactStrictMode: true,
   // Any other settings
-
+  async rewrites() {
+    return [
+      {
+        source: '/sitemap-games.xml',
+        destination: '/api/sitemap-games',
+      },
+      {
+        source: '/sitemap-categories.xml',
+        destination: '/api/sitemap-categories',
+      },
+    ];
+  },
   // Adding experimental features or custom settings if required
   experimental: {
     scrollRestoration: true, // Example of an experimental feature
