@@ -78,17 +78,17 @@ const BFooter = () => {
 
           <div className="grid grid-cols-2 md:grid-cols-3 gap-6 text-gray-600">
             <ul>
-              <li><a href="#about" className="hover:underline">About</a></li>
-              <li><a href="#jobs" className="hover:underline">Jobs</a></li>
-              <li><a href="#privacy" className="hover:underline">Privacy Statement</a></li>
-              <li><a href="#terms" className="hover:underline">Terms of Use</a></li>
-              <li><a href="#contact" className="hover:underline">Contact</a></li>
+              <li><a href="/about-us" className="hover:underline">About</a></li>
+              {/* <li><a href="#jobs" className="hover:underline">Jobs</a></li> */}
+              <li><a href="/privacy-policy" className="hover:underline">Privacy Statement</a></li>
+              <li><a href="/terms-and-conditions" className="hover:underline">Terms of Use</a></li>
+              <li><a href="/contact-us" className="hover:underline">Contact</a></li>
             </ul>
             <ul>
-              <li><a href="#developers" className="hover:underline">Loki for Developers</a></li>
-              <li><a href="#kids" className="hover:underline">Loki Kids</a></li>
-              <li><a href="#cookie" className="hover:underline">Cookie Statement</a></li>
-              <li><a href="#faq" className="hover:underline">FAQ</a></li>
+              <li><a href="/loki-for-developers" className="hover:underline">Loki for Developers</a></li>
+              <li><a href="/loki-kids" className="hover:underline">Loki Kids</a></li>
+              {/* <li><a href="#cookie" className="hover:underline">Cookie Statement</a></li> */}
+              <li><a href="/faq" className="hover:underline">FAQ</a></li>
             </ul>
             <div className="flex items-center justify-center">
               <Image
