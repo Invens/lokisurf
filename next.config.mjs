@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  // Any other settings
+  // Combining rewrites into a single configuration
   async rewrites() {
     return [
       {
@@ -12,6 +12,10 @@ const nextConfig = {
         source: '/sitemap-categories.xml',
         destination: '/api/sitemap-categories',
       },
+      {
+        source: '/old-page',
+        destination: '/new-page',
+      },
     ];
   },
   // Adding experimental features or custom settings if required
@@ -19,7 +23,7 @@ const nextConfig = {
     scrollRestoration: true, // Example of an experimental feature
   },
 
-  // Optional: Add custom headers or rewrites
+  // Optional: Add custom headers
   async headers() {
     return [
       {
@@ -30,15 +34,6 @@ const nextConfig = {
             value: 'nosniff',
           },
         ],
-      },
-    ];
-  },
-
-  async rewrites() {
-    return [
-      {
-        source: '/old-page',
-        destination: '/new-page',
       },
     ];
   },
