@@ -5,6 +5,7 @@ import { useState } from "react";
 import Sidebar from "@/components/Sidebar";
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+import Head from "next/head";
 
 const getRandomColor = () => {
   const letters = '0123456789ABCDEF';
@@ -23,6 +24,13 @@ export default function RootLayout({ children }) {
 
   return (
     <html lang="en">
+      <Head>
+        <script 
+          async 
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4006370769326429"
+          crossOrigin="anonymous">
+        </script>
+      </Head>
       <body className={audiowide.className} style={{ backgroundColor: bgColor }}>
         <div>
           {children}
