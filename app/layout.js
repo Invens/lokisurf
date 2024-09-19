@@ -6,6 +6,7 @@ import Sidebar from "@/components/Sidebar";
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import Head from "next/head";
+import { analytics } from "@/lib/firebase";
 
 const getRandomColor = () => {
   const letters = '0123456789ABCDEF';
@@ -20,6 +21,13 @@ const getRandomColor = () => {
 const audiowide = Audiowide({ subsets: ["latin"], weight: "400" });
 
 export default function RootLayout({ children }) {
+
+  useEffect(() => {
+    if (analytics) {
+      // You can add analytics logging here if needed
+    }
+  }, [analytics]);
+
   const [bgColor, setBgColor] = useState(getRandomColor());
 
   return (
@@ -35,6 +43,7 @@ export default function RootLayout({ children }) {
         <div>
           {children}
         </div>
+        
       </body>
     </html>
   );
