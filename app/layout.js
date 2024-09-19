@@ -1,7 +1,7 @@
 "use client";
 import { Audiowide } from "next/font/google"; // Import Audiowide font
 import "./globals.css";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import Sidebar from "@/components/Sidebar";
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
