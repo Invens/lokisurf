@@ -37,6 +37,10 @@ const nextConfig = {
       },
     ];
   },
+   // Allowing images from specified domains
+   images: {
+    domains: ['s.h5games.online'], // Add any other domains you need here
+  },
 };
 
 export default nextConfig;

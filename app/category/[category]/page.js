@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Head from 'next/head'; // Import Head for meta tags
 import Header from '@/components/header/page';
 import Bfooter from '@/components/footer/b-footer';
+import Image from 'next/image';
 
 const CategoryPage = () => {
   const { category } = useParams(); // Use useParams to access the dynamic route parameters
@@ -65,7 +66,9 @@ const CategoryPage = () => {
                   >
                     <h3 className="text-sm">{game.title}</h3>
                   </div>
-                  <img
+                  <Image
+                  width={1000}
+                  height={1000}
                     src={game.thumb}
                     alt={game.title}
                     className="rounded-md mb-0 w-full h-full object-cover"
