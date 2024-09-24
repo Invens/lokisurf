@@ -16,31 +16,33 @@ if (cluster.isWorker) {
   // Helper function to normalize data from both APIs
   const normalizeGameData = (game, source) => {
     if (source === 'h5games') {
-      return {
-        title: game.title,
-        category: game.category,
-        description: game.description,
-        url: game.link,
-        thumbnail: game.thumb,
-        guid: game.guid,
-        width: game.width,
-        height: game.height,
-        source: 'H5Games' // This helps differentiate the source in case you need to
-      };
+        return {
+            title: game.title,
+            category: game.category, // Category should come from game.category
+            description: game.description,
+            url: game.link,
+            thumbnail: game.thumb, // Thumbnail from game.thumb in h5games API
+            guid: game.guid,
+            width: game.width,
+            height: game.height,
+            source: 'H5Games'
+        };
     } else if (source === 'htmlgames') {
-      return {
-        title: game.name,
-        category: game.category,
-        description: game.description,
-        url: game.url,
-        thumbnail: game.thumb3, // You can pick any of the thumbnail sizes, e.g., thumb3
-        guid: game.url.split('/').pop(), // Extracting a pseudo GUID based on URL
-        width: game.width,
-        height: game.height,
-        source: 'HTMLGames'
-      };
+        return {
+            title: game.name,
+            category: game.category, // Category from game.category in htmlgames API
+            description: game.description,
+            url: game.url,
+            // Choosing thumb3 for consistency; can switch to other thumbs if needed
+            thumbnail: game.thumb3 || game.thumb4 || game.thumb1, 
+            guid: game.url.split('/').pop(), // Using the URL to generate a GUID
+            width: game.width,
+            height: game.height,
+            source: 'HTMLGames'
+        };
     }
-  };
+};
+
 
   // Endpoint to get all games from both APIs
   app.get('/api/games', async (req, res) => {
