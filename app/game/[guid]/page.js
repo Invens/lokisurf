@@ -26,7 +26,6 @@ const GamePage = () => {
         setLoading(true);
         try {
           const data = await fetchGameById(guid);
-          console.log("Fetched Game Data:", data);
           setGameData(data);
           const related = await fetchRelatedGames(guid);
           setRelatedGames(related);

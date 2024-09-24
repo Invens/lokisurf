@@ -20,7 +20,6 @@ export default function Contact() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     // Form submission logic here (API integration)
-    console.log(formData);
     setFormSubmitted(true);
   };
 
