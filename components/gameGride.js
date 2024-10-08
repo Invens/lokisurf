@@ -1,14 +1,12 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import Slider from 'react-slick'; // Import react-slick
-import Head from "next/head";
+import Slider from 'react-slick';
 import Image from 'next/image';
 
 const GameGrid = ({ games }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate a delay to show the loading spinner
     const timer = setTimeout(() => {
       setLoading(false);
     }, 1000); // Adjust this delay as needed
@@ -18,13 +16,14 @@ const GameGrid = ({ games }) => {
 
   // Slider settings for mobile view
   const sliderSettings = {
-    dots: false,
+    dots: true, // Show dots for navigation
     infinite: true,
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 3000, // Adjust as needed
+    autoplaySpeed: 3000,
+    adaptiveHeight: true, // Make the slider height adapt to the active slide
   };
 
   // Get the first 10 games for the slider
@@ -34,10 +33,9 @@ const GameGrid = ({ games }) => {
   const gridGames = games.slice(10);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative mt-[100px]">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative mt-[140px]">
       {loading ? (
         <div className="flex justify-center items-center h-[100vh]">
-          {/* Loading Animation */}
           <div className="loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-24 w-24 neon-glow"></div>
         </div>
       ) : (
@@ -66,24 +64,28 @@ const GameGrid = ({ games }) => {
 
           {/* Grid view for mobile and desktop */}
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-9 gap-4 p-4">
-            {gridGames.map((game, index) => (
-              <Link key={index} href={`/game/${game.guid}`}>
-                <div
-                  className={`relative p-1 rounded-lg overflow-hidden shadow-md transform transition-transform duration-300 neon-border game-tile hover:scale-110 hover:rotate-3d ${index % 7 === 0 ? 'col-span-2 row-span-2' : ''}`}
-                >
-                  <div className="absolute bottom-0 left-0 right-0 inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white text-center opacity-0 hover:opacity-100 transition-opacity duration-300">
-                    <h3 className="text-sm neon-text">{game.title}</h3>
+            {gridGames.map((game, index) => {
+              const isLargerGame = ['subway_surfers', 'temple_run_2', 'ludo_club_fun_dice_game', 'chess_3d', '8ball_pro', 'nuts_and_bolts'].includes(game.guid);
+              
+              return (
+                <Link key={index} href={`/game/${game.guid}`}>
+                  <div
+                    className={`relative p-1 rounded-lg overflow-hidden shadow-md transform transition-transform duration-300 neon-border game-tile hover:scale-110 hover:rotate-3d ${isLargerGame ? 'col-span-2 row-span-2 larger-game' : ''}`}
+                  >
+                    <div className="absolute bottom-0 left-0 right-0 inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white text-center opacity-0 hover:opacity-100 transition-opacity duration-300">
+                      <h3 className="text-sm neon-text">{game.title}</h3>
+                    </div>
+                    <Image
+                      width={1000}
+                      height={1000}
+                      src={game.thumb}
+                      alt={game.title}
+                      className="rounded-md mb-0 w-full h-full object-cover"
+                    />
                   </div>
-                  <Image
-                    width={1000}
-                    height={1000}
-                    src={game.thumb}
-                    alt={game.title}
-                    className="rounded-md mb-0 w-full h-full object-cover"
-                  />
-                </div>
-              </Link>
-            ))}
+                </Link>
+              );
+            })}
           </div>
         </>
       )}
@@ -125,6 +127,7 @@ const GameGrid = ({ games }) => {
           transform: rotateY(0deg) rotateX(0deg);
           transition: transform 0.5s ease-in-out;
         }
+
         .hover\\:rotate-3d:hover {
           transform: rotateY(15deg) rotateX(15deg);
         }
@@ -134,6 +137,13 @@ const GameGrid = ({ games }) => {
           box-shadow: 0px 0px 10px #0ff, 0px 0px 20px #00f, 0px 0px 30px #00ff00;
         }
 
+        .larger-game {
+          grid-column: span 2; /* Adjust to take up two columns */
+          grid-row: span 2; /* Adjust to take up two rows */
+          transform: scale(1.3); /* Slightly increase the size for emphasis */
+          z-index: 10; /* Bring to front */
+        }
+
         @keyframes backgroundAnimation {
           0% { background-color: #000000; }
           50% { background-color: #0a0a0a; }
@@ -141,6 +151,13 @@ const GameGrid = ({ games }) => {
         }
         .hover\\:animate-background:hover {
           animation: backgroundAnimation 1s ease-in-out infinite;
+        }
+
+        @media (max-width: 640px) {
+          .larger-game {
+            grid-column: span 2; /* Keep larger games spanning two columns */
+            grid-row: span 1; /* Adjust to take up one row on mobile */
+          }
         }
       `}</style>
     </div>
