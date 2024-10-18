@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import './style.css';
 import Image from "next/image";
+import GoogleAds from '../GoogleAds'; // Import the GoogleAds component
+
 
 const BFooter = () => {
   const [logoPosition, setLogoPosition] = useState(0); // Initial position
@@ -24,6 +26,10 @@ const BFooter = () => {
 
   return (
     <footer className="relative bg-white w-full mt-[100px] pt-[150px] overflow-hidden">
+        {/* Google Ads Section */}
+        <div className="my-8">
+            <GoogleAds client="ca-pub-4006370769326429" slot="3810143337" />
+          </div>
       {/* Animated Waves */}
       <div className="waves back">
         <svg viewBox="0 24 150 28">

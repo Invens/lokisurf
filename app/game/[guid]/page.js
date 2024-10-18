@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Head from "next/head";
 import Bfooter from "@/components/footer/b-footer";
 import Image from "next/image";
+import GoogleVerticalAds from "@/components/GoogleVerticalAds";
 
 const GamePage = () => {
   const { guid } = useParams();
@@ -19,6 +20,7 @@ const GamePage = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [searchInput, setSearchInput] = useState('');
   const [searchResults, setSearchResults] = useState([]);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,7 +41,7 @@ const GamePage = () => {
     };
     fetchData();
   }, [guid]);
-  
+
 
   // Search functionality
   useEffect(() => {
@@ -98,11 +100,11 @@ const GamePage = () => {
       </div>
     );
   }
-  
+
   if (!gameData) {
     return <div className="text-white text-center">No game data found</div>;
   }
-  
+
 
   const handleFullscreen = () => {
     const iframe = document.querySelector("iframe");
@@ -188,43 +190,42 @@ const GamePage = () => {
                 </button>
               </div>
             </div>
-            {leftSidebarGames.map((game) => (
-              <Link key={game.guid} href={`/game/${game.guid}`}>
-                <Image width={1000} height={1000} src={game.thumb} alt={game.title} className="w-[10vw] h-[12vh] mt-2 object-cover rounded-md cursor-pointer" />
-              </Link>
-            ))}
-          </div>
- {/* Search Popup */}
- {isSearchPopupOpen && (
-          <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50">
-            <div className="bg-white p-4 rounded-lg w-full max-w-md">
-              <input
-                type="text"
-                placeholder="Search game"
-                value={searchInput}
-                onChange={handleSearchChange}
-                className="p-2 rounded-lg w-full"
-              />
-              <div className={`mt-2 bg-white rounded-lg shadow-lg ${searchInput ? 'block' : 'hidden'}`}>
-                {searchResults.map(game => (
-                  <p
-                    key={game.guid}
-                    className="block px-4 py-2 text-black hover:bg-gray-200 cursor-pointer"
-                    onClick={() => handleGameClick(game.guid)}
-                  >
-                    {game.title} - {game.category}
-                  </p>
-                ))}
-                {searchResults.length === 0 && searchInput && (
-                  <p className="block px-4 py-2 text-gray-500">No results found</p>
-                )}
+            <div className="hidden lg:block w-[300px] ml-8">
+              <div className="sticky top-[140px]">
+                <GoogleVerticalAds client="ca-pub-4006370769326429" slot="1271410218" format='auto' responsive="true" />
               </div>
-              <button onClick={() => setIsSearchPopupOpen(false)} className="mt-2 text-red-500">
-                Close
-              </button>
+            </div>          </div>
+          {/* Search Popup */}
+          {isSearchPopupOpen && (
+            <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50">
+              <div className="bg-white p-4 rounded-lg w-full max-w-md">
+                <input
+                  type="text"
+                  placeholder="Search game"
+                  value={searchInput}
+                  onChange={handleSearchChange}
+                  className="p-2 rounded-lg w-full"
+                />
+                <div className={`mt-2 bg-white rounded-lg shadow-lg ${searchInput ? 'block' : 'hidden'}`}>
+                  {searchResults.map(game => (
+                    <p
+                      key={game.guid}
+                      className="block px-4 py-2 text-black hover:bg-gray-200 cursor-pointer"
+                      onClick={() => handleGameClick(game.guid)}
+                    >
+                      {game.title} - {game.category}
+                    </p>
+                  ))}
+                  {searchResults.length === 0 && searchInput && (
+                    <p className="block px-4 py-2 text-gray-500">No results found</p>
+                  )}
+                </div>
+                <button onClick={() => setIsSearchPopupOpen(false)} className="mt-2 text-red-500">
+                  Close
+                </button>
+              </div>
             </div>
-          </div>
-        )}
+          )}
           {/* Game Content */}
           <div className="w-full md:w-[70%] flex flex-col items-center px-2 mt-4">
             <div className="relative w-full h-[70vh] bg-white shadow-lg rounded-sm">
@@ -251,23 +252,25 @@ const GamePage = () => {
                 <button className="px-4 py-3 bg-gray-700 text-white rounded-full hover:bg-gray-600">👎</button>
                 <button onClick={handleFullscreen} className="px-3 lg:px-4 py-2 lg:py-3 bg-gray-700 text-white rounded-full hover:bg-gray-600">⛶</button>
               </div>
-           
+
             </div>
-               {/* Game Description */}
-               <div className="p-4 w-full bg-gray-800 rounded-lg mt-4 shadow-md">
+            {/* Game Description */}
+            <div className="p-4 w-full bg-gray-800 rounded-lg mt-4 shadow-md">
               <h2 className="text-lg font-semibold">Description</h2>
               <p className="text-gray-300">{gameData.description}</p>
+
+              <GoogleVerticalAds client="ca-pub-4006370769326429" slot="1790284961" format='auto' responsive="true" />
             </div>
           </div>
-           
+
 
           {/* Right Sidebar */}
           <div className="hidden md:block w-[15%] p-2 space-y-2">
-            {rightSidebarGames.map((game) => (
-              <Link key={game.guid} href={`/game/${game.guid}`}>
-                <Image width={1000} height={1000} src={game.thumb} alt={game.title} className="w-[10vw] h-[12vh] mt-2 object-cover rounded-md cursor-pointer" />
-              </Link>
-            ))}
+          <div className="hidden lg:block w-[300px] ml-8">
+              <div className="sticky top-[140px]">
+                <GoogleVerticalAds client="ca-pub-4006370769326429" slot="1271410218" format='auto' responsive="true" />
+              </div>
+            </div>   
           </div>
         </div>
 

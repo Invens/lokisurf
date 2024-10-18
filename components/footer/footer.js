@@ -1,5 +1,5 @@
 import React from "react";
-
+import GoogleAds from '../GoogleAds'; // Import the GoogleAds component
 const Footer = () => {
 
     return (
@@ -13,6 +13,11 @@ const Footer = () => {
 
             <p className="bg-black h-[1px] mt-8"></p>
 
+
+  {/* Google Ads Section */}
+  <div className="my-8">
+            <GoogleAds client="ca-pub-4006370769326429" slot="3810143337" />
+          </div>
 
             <h1 className="text-2xl mt-8">Explore Our Expansive Game Collection</h1>
 

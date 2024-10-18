@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import Slider from 'react-slick';
 import Image from 'next/image';
+import GoogleAds from './GoogleAds'; // Import the GoogleAds component
 
 const GameGrid = ({ games }) => {
   const [loading, setLoading] = useState(true);
@@ -9,27 +10,23 @@ const GameGrid = ({ games }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 1000); // Adjust this delay as needed
+    }, 1000);
 
     return () => clearTimeout(timer);
   }, []);
 
-  // Slider settings for mobile view
   const sliderSettings = {
-    dots: true, // Show dots for navigation
+    dots: true,
     infinite: true,
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 3000,
-    adaptiveHeight: true, // Make the slider height adapt to the active slide
+    adaptiveHeight: true,
   };
 
-  // Get the first 10 games for the slider
   const sliderGames = games.slice(0, 10);
-
-  // Get the remaining games for the grid view
   const gridGames = games.slice(10);
 
   return (
@@ -87,8 +84,15 @@ const GameGrid = ({ games }) => {
               );
             })}
           </div>
+
+          {/* Google Ads Section */}
+          <div className="my-8">
+            <GoogleAds client="ca-pub-4006370769326429" slot="3810143337" format='auto' />
+          </div>
+
         </>
       )}
+      {/* CSS styles remain unchanged */}
       <style jsx>{`
         .game-tile {
           border: 2px solid #00FF00;
@@ -138,10 +142,10 @@ const GameGrid = ({ games }) => {
         }
 
         .larger-game {
-          grid-column: span 2; /* Adjust to take up two columns */
-          grid-row: span 2; /* Adjust to take up two rows */
-          transform: scale(1.3); /* Slightly increase the size for emphasis */
-          z-index: 10; /* Bring to front */
+          grid-column: span 2; 
+          grid-row: span 2; 
+          transform: scale(1.3); 
+          z-index: 10; 
         }
 
         @keyframes backgroundAnimation {
@@ -149,14 +153,15 @@ const GameGrid = ({ games }) => {
           50% { background-color: #0a0a0a; }
           100% { background-color: #000000; }
         }
+        
         .hover\\:animate-background:hover {
           animation: backgroundAnimation 1s ease-in-out infinite;
         }
 
         @media (max-width: 640px) {
           .larger-game {
-            grid-column: span 2; /* Keep larger games spanning two columns */
-            grid-row: span 1; /* Adjust to take up one row on mobile */
+            grid-column: span 2; 
+            grid-row: span 1; 
           }
         }
       `}</style>

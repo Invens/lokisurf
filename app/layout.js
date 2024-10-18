@@ -32,11 +32,8 @@ export default function RootLayout({ children }) {
         <link rel="canonical" href="https://lokisurf.com" />
         <link rel="icon" href="/favicon.ico" />
         {/* Ads Script */}
-        <script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4006370769326429"
-          crossOrigin="anonymous"
-        ></script>
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4006370769326429"
+     crossorigin="anonymous"></script>
       </Head>
       <body className={audiowide.className}>
         <ClientWrapper>
