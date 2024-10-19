@@ -1,14 +1,22 @@
 // components/GoogleAds.jsx
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Script from 'next/script';
 
 const GoogleAds = ({ client, slot, responsive="true", format="auto"}) => {
+  const [adLoaded, setAdLoaded] = useState(false);
+
   useEffect(() => {
-    // Check if adsbygoogle is defined before pushing
-    if (window.adsbygoogle) {
-      window.adsbygoogle.push({});
+    if (!adLoaded && typeof window !== "undefined" && window.adsbygoogle) {
+      // Push a new ad only if it hasn't been loaded already
+      try {
+        window.adsbygoogle.push({});
+        setAdLoaded(true); // Mark the ad as loaded
+      } catch (e) {
+        console.error("AdSense Error: ", e.message);
+      }
     }
-  }, []);
+  }, [adLoaded]);
+
 
   return (
     <>

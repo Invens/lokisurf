@@ -26,8 +26,8 @@ const GameGrid = ({ games }) => {
     adaptiveHeight: true,
   };
 
-  const sliderGames = games.slice(0, 10);
-  const gridGames = games.slice(10);
+  const sliderGames = games.slice(10, 15);
+  const gridGames = games.slice(0);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative mt-[140px]">

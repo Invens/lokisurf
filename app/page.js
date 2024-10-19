@@ -56,7 +56,7 @@ export default function Home() {
           const placeSubwaySurfer = (gamesArray, prioritizedGames) => {
             const subwaySurfer = prioritizedGames.find(game => game.guid === 'subway_surfers');
             if (subwaySurfer) {
-              gamesArray.splice(19, 0, { ...subwaySurfer, prioritized: true });
+              gamesArray.splice(10, 0, { ...subwaySurfer, prioritized: true });
             }
             return gamesArray;
           };

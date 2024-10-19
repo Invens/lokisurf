@@ -6,7 +6,9 @@ import Link from 'next/link';
 import Head from "next/head";
 import Bfooter from "@/components/footer/b-footer";
 import Image from "next/image";
-import GoogleVerticalAds from "@/components/GoogleVerticalAds";
+// import GoogleVerticalAds from "@/components/GoogleVerticalAds";
+import GoogleAds from "@/components/GoogleAds";
+
 
 const GamePage = () => {
   const { guid } = useParams();
@@ -192,7 +194,7 @@ const GamePage = () => {
             </div>
             <div className="hidden lg:block w-[300px] ml-8">
               <div className="sticky top-[140px]">
-                <GoogleVerticalAds client="ca-pub-4006370769326429" slot="1271410218" format='auto' responsive="true" />
+                {/* <GoogleVerticalAds client="ca-pub-4006370769326429" slot="1271410218" format='auto' responsive="true" /> */}
               </div>
             </div>          </div>
           {/* Search Popup */}
@@ -259,18 +261,21 @@ const GamePage = () => {
               <h2 className="text-lg font-semibold">Description</h2>
               <p className="text-gray-300">{gameData.description}</p>
 
-              <GoogleVerticalAds client="ca-pub-4006370769326429" slot="1790284961" format='auto' responsive="true" />
+   {/* Google Ads Section */}
+   <div className="my-8">
+            <GoogleAds client="ca-pub-4006370769326429" slot="3810143337" format='auto' />
+          </div>
             </div>
           </div>
 
 
           {/* Right Sidebar */}
           <div className="hidden md:block w-[15%] p-2 space-y-2">
-          <div className="hidden lg:block w-[300px] ml-8">
+          {/* <div className="hidden lg:block w-[300px] ml-8">
               <div className="sticky top-[140px]">
                 <GoogleVerticalAds client="ca-pub-4006370769326429" slot="1271410218" format='auto' responsive="true" />
               </div>
-            </div>   
+            </div>    */}
           </div>
         </div>
 
