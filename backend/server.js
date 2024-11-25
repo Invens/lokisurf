@@ -1,10 +1,54 @@
+require('dotenv').config();
 const cluster = require('cluster');
 const os = require('os');
 const express = require('express');
+const bodyParser = require('body-parser');
+const webPush = require('web-push');
+const mysql = require('mysql2');
 const axios = require('axios');
 const cors = require('cors');
 
+const nodemailer = require('nodemailer');
+// Initialize app
+const app = express();
+app.use(cors());
+app.use(bodyParser.json());
+app.use(express.json()); // Built-in middleware to parse JSON requests
+app.use(express.urlencoded({ extended: true })); // Parse URL-encoded data
+
+// Database connection
+const db = mysql.createConnection({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+});
+
+db.connect((err) => {
+  if (err) {
+    console.error('Database connection failed:', err);
+  } else {
+    console.log('Connected to MySQL database.');
+  }
+});
+
+// Nodemailer transporter setup with SMTP
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST , // e.g., 'smtp.mailtrap.io', 'smtp.gmail.com'
+  port: process.env.SMTP_PORT, // e.g., 587 for TLS, 465 for SSL
+  secure: process.env.SMTP_SECURE === 'false', // true for 465, false for other ports
+  auth: {
+    user: process.env.SMTP_USER, // SMTP username
+    pass: process.env.SMTP_PASSWORD, // SMTP password
+  },
+  connectionTimeout: 10000, // Optional: Increase timeout
+
+});
+
+
+
 const numCPUs = os.cpus().length; // Number of CPU cores
+
 
 const externalSources = [
   'https://h5games.online/freegames.json',
@@ -142,13 +186,19 @@ const normalizeOnlineGames = (games) => {
   }));
 };
 
+
+
+
 // Worker process
 if (cluster.isWorker) {
   const app = express();
   const port = 8001;
 
   app.use(cors());
-
+  app.use(bodyParser.json());
+  app.use(express.json()); // Built-in middleware to parse JSON requests
+  app.use(express.urlencoded({ extended: true })); // Parse URL-encoded data
+  
   let cachedGames = []; // To store the games for caching
   let lastFetchTime = 0;
   const CACHE_DURATION = 60 * 60 * 1000; // 1 hour
@@ -216,6 +266,13 @@ if (cluster.isWorker) {
     res.json(categories); // Send the unique categories as a response
   });
 
+  // Set VAPID details
+webPush.setVapidDetails(
+  'mailto:your-email@example.com',
+  process.env.VAPID_PUBLIC_KEY,
+  process.env.VAPID_PRIVATE_KEY
+);
+
   // Endpoint to get related games by category or tags
   app.get('/api/related-games/:guid', async (req, res) => {
     const { guid } = req.params;
@@ -235,6 +292,214 @@ if (cluster.isWorker) {
 
     res.json(relatedGames);
   });
+
+  // Endpoint to save a subscription
+// Endpoint to save a subscription
+app.post('/api/subscribe', (req, res) => {
+  console.log('Request body:', req.body); // Log the request body for debugging
+
+  const { endpoint, keys } = req.body;
+
+  if (!endpoint || !keys) {
+    return res.status(400).send({ success: false, message: 'Invalid subscription data' });
+  }
+
+  const { p256dh, auth } = keys;
+
+  const query = 'INSERT INTO subscriptions (endpoint, p256dh, auth) VALUES (?, ?, ?)';
+  db.query(query, [endpoint, p256dh, auth], (err) => {
+    if (err) {
+      console.error('Error saving subscription:', err);
+      return res.status(500).send({ success: false });
+    }
+    res.status(201).send({ success: true });
+  });
+});
+
+// Endpoint to send notifications
+app.post('/api/send-notifications', (req, res) => {
+  const { payload } = req.body;
+
+  if (!payload || !payload.title || !payload.body) {
+    return res.status(400).send({ success: false, message: 'Payload with title and body is required' });
+  }
+
+  const notificationPayload = JSON.stringify({
+    title: payload.title,
+    body: payload.body,
+    icon: payload.icon || '/icon.png',
+    url: payload.url || '/',
+  });
+
+  // Retrieve all subscriptions from the database
+  const query = 'SELECT * FROM subscriptions';
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching subscriptions:', err);
+      return res.status(500).send({ success: false, message: 'Failed to fetch subscriptions' });
+    }
+
+    const sendPromises = results.map((subscription) => {
+      const pushSubscription = {
+        endpoint: subscription.endpoint,
+        keys: {
+          p256dh: subscription.p256dh,
+          auth: subscription.auth,
+        },
+      };
+
+      return webPush
+        .sendNotification(pushSubscription, notificationPayload)
+        .catch((error) => {
+          console.error('Error sending notification to:', subscription.endpoint, error);
+
+          // Handle errors for invalid subscriptions
+          if (error.statusCode === 410) {
+            console.log('Removing expired subscription:', subscription.endpoint);
+            const deleteQuery = 'DELETE FROM subscriptions WHERE endpoint = ?';
+            db.query(deleteQuery, [subscription.endpoint], (deleteErr) => {
+              if (deleteErr) console.error('Error removing expired subscription:', deleteErr);
+            });
+          }
+        });
+    });
+
+    // Wait for all notifications to be sent
+    Promise.all(sendPromises)
+      .then(() => {
+        // Save the campaign to the database
+        const saveCampaignQuery = `
+          INSERT INTO campaigns (title, body, icon, url, createdAt)
+          VALUES (?, ?, ?, ?, NOW())
+        `;
+        db.query(
+          saveCampaignQuery,
+          [payload.title, payload.body, payload.icon || '/icon.png', payload.url || '/'],
+          (saveErr) => {
+            if (saveErr) {
+              console.error('Error saving campaign:', saveErr);
+              return res.status(500).send({ success: false, message: 'Failed to save campaign' });
+            }
+
+            res.status(200).send({ success: true, message: 'Notifications sent and campaign saved successfully' });
+          }
+        );
+      })
+      .catch((err) => {
+        console.error('Error sending notifications:', err);
+        res.status(500).send({ success: false, message: 'Failed to send some notifications' });
+      });
+  });
+});
+
+
+// API endpoint to handle form submissions
+app.post('/signup', async (req, res) => {
+  const { name, email, type } = req.body;
+
+  if (!name || !email || !type) {
+    return res.status(400).json({ error: 'All fields are required.' });
+  }
+
+  const mailOptions = {
+    from: process.env.SMTP_FROM_EMAIL, // Sender address (configured in .env)
+    to: process.env.SMTP_TO_EMAIL, // Recipient address (configured in .env)
+    subject: 'New Signup Developer Submission from LokiSurf',
+    text: `You have a new signup from the LokiSurf:
+Name: ${name}
+Email: ${email}
+Type: ${type}`,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    res.status(200).json({ message: 'Signup received. We will contact you soon.' });
+  } catch (error) {
+    console.error('Error sending email:', error);
+    res.status(500).json({ error: 'Failed to send email.' });
+  }
+});
+
+app.get('/api/subscribers/count', (req, res) => {
+  const query = 'SELECT COUNT(*) AS count FROM subscriptions';
+  db.query(query, (err, results) => {
+    if (err) return res.status(500).send('Error fetching subscriber count');
+    res.json({ count: results[0].count });
+  });
+});
+
+app.get('/api/campaigns', (req, res) => {
+  const query = 'SELECT * FROM campaigns ORDER BY createdAt DESC';
+  db.query(query, (err, results) => {
+    if (err) return res.status(500).send('Error fetching campaigns');
+    res.json(results);
+  });
+});
+
+
+app.post('/api/campaigns/resend/:id', (req, res) => {
+  const { id } = req.params;
+
+  const query = 'SELECT * FROM campaigns WHERE id = ?';
+  db.query(query, [id], (err, results) => {
+    if (err) {
+      console.error('Error fetching campaign:', err);
+      return res.status(500).send({ success: false, message: 'Failed to fetch campaign' });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).send({ success: false, message: 'Campaign not found' });
+    }
+
+    const campaign = results[0];
+    const notificationPayload = JSON.stringify({
+      title: campaign.title,
+      body: campaign.body,
+      icon: campaign.icon || '/icon.png',
+      url: campaign.url || '/',
+    });
+
+    // Fetch subscriptions and send notifications
+    const subscriptionQuery = 'SELECT * FROM subscriptions';
+    db.query(subscriptionQuery, (subErr, subscriptions) => {
+      if (subErr) {
+        console.error('Error fetching subscriptions:', subErr);
+        return res.status(500).send({ success: false, message: 'Failed to fetch subscriptions' });
+      }
+
+      const sendPromises = subscriptions.map((subscription) => {
+        const pushSubscription = {
+          endpoint: subscription.endpoint,
+          keys: {
+            p256dh: subscription.p256dh,
+            auth: subscription.auth,
+          },
+        };
+
+        return webPush
+          .sendNotification(pushSubscription, notificationPayload)
+          .catch((error) => {
+            console.error('Error sending notification:', error);
+            if (error.statusCode === 410) {
+              // Remove expired subscriptions
+              const deleteQuery = 'DELETE FROM subscriptions WHERE endpoint = ?';
+              db.query(deleteQuery, [subscription.endpoint], () => {});
+            }
+          });
+      });
+
+      Promise.all(sendPromises)
+        .then(() => res.status(200).send({ success: true, message: 'Notification sent successfully' }))
+        .catch((err) => {
+          console.error('Error sending notifications:', err);
+          res.status(500).send({ success: false, message: 'Failed to send notifications' });
+        });
+    });
+  });
+});
+
+
+
 
   app.listen(port, () => {
     console.log(`Worker ${process.pid} started, Proxy server running on http://localhost:${port}`);

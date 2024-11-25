@@ -7,13 +7,25 @@ import Pagination from "../components/pagination";
 import Header from "@/components/header/page";
 import Footer from "../components/footer/footer";
 import Bfooter from "@/components/footer/b-footer";
+import { subscribeUserToPush } from "@/components/NotificationButton";
 
 export default function Home() {
   const [games, setGames] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const gamesPerPage = 352; // Number of games to show per page
+  const [isNotificationEnabled, setIsNotificationEnabled] = useState(false);
+  const [showNotificationPrompt, setShowNotificationPrompt] = useState(false);
+
 
   useEffect(() => {
+    if (typeof window !== "undefined" && "Notification" in window) {
+      setIsNotificationEnabled(Notification.permission === "granted");
+      if (Notification.permission === "default") {
+        setShowNotificationPrompt(true);
+      }
+    }
+
+
     const fetchData = async () => {
       try {
         const data = await fetchGamesData();
@@ -135,7 +147,30 @@ export default function Home() {
     };
 
     fetchData();
+    
   }, []);
+
+   // Handle enabling notifications
+   const handleEnableNotifications = async () => {
+    try {
+      const permission = await Notification.requestPermission();
+      if (permission === "granted") {
+        await subscribeUserToPush();
+        setIsNotificationEnabled(true);
+        setShowNotificationPrompt(false);
+        alert("Notifications enabled successfully!");
+      } else {
+        alert("Notifications permission denied.");
+      }
+    } catch (error) {
+      console.error("Error enabling notifications:", error);
+      alert("Failed to enable notifications. Please try again.");
+    }
+  };
+  const handleDeclineNotifications = () => {
+    setShowNotificationPrompt(false);
+    alert("You can enable notifications later in your browser settings.");
+  };
 
   // Calculate the games to display on the current page
   const indexOfLastGame = currentPage * gamesPerPage;
@@ -147,30 +182,76 @@ export default function Home() {
 
   return (
     <>
-      <div>
-        <Layout>
-          <Header />
-          {games.length > 0 ? (
-            <>
-              <GameGrid
-                title={`Page ${currentPage}`}
-                games={currentGames}
-              />
-              <Pagination
-                gamesPerPage={gamesPerPage}
-                totalGames={games.length}
-                paginate={paginate}
-                currentPage={currentPage}
-                
-              />
-            </>
-          ) : (
-            <p className="text-white">Loading...</p>
-          )}
-          <Footer />
-        </Layout>
-      </div>
-      <Bfooter />
-    </>
+    <div>
+      <Layout>
+        {showNotificationPrompt && !isNotificationEnabled && (
+          <div
+            style={{
+              position: "fixed",
+              bottom: "20px", // Bottom position
+              right: "20px", // Right position
+              backgroundColor: "#333",
+              color: "#fff",
+              padding: "15px 20px",
+              borderRadius: "8px",
+              zIndex: "10000",
+              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+            }}
+          >
+            <p style={{ margin: 0 }}>Enable notifications to stay updated!</p>
+            <button
+              onClick={handleEnableNotifications}
+              style={{
+                backgroundColor: "#007bff",
+                color: "#fff",
+                fontSize: "12px",
+                border: "none",
+                padding: "8px 16px",
+                borderRadius: "5px",
+                cursor: "pointer",
+              }}
+            >
+              Allow
+            </button>
+            <button
+              onClick={handleEnableNotifications}
+              style={{
+                backgroundColor: "#dc3545",
+                color: "#fff",
+                border: "none",
+                fontSize: "12px",
+                padding: "8px 16px",
+                borderRadius: "5px",
+                cursor: "pointer",
+              }}
+            >
+              No Thanks
+            </button>
+          </div>
+        )}
+
+        {games.length > 0 ? (
+          <>
+            <GameGrid title={`Page ${currentPage}`} games={currentGames} />
+            <Pagination
+              gamesPerPage={gamesPerPage}
+              totalGames={games.length}
+              paginate={paginate}
+              currentPage={currentPage}
+            />
+          </>
+        ) : (
+          <p className="text-white">Loading...</p>
+        )}
+
+        <Header />
+        <Footer />
+      </Layout>
+    </div>
+    <Bfooter />
+  </>
   );
 }
