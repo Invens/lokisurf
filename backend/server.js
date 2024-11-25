@@ -349,19 +349,16 @@ app.post('/api/send-notifications', (req, res) => {
       };
 
       return webPush
-        .sendNotification(pushSubscription, notificationPayload)
-        .catch((error) => {
-          console.error('Error sending notification to:', subscription.endpoint, error);
-
-          // Handle errors for invalid subscriptions
-          if (error.statusCode === 410) {
-            console.log('Removing expired subscription:', subscription.endpoint);
-            const deleteQuery = 'DELETE FROM subscriptions WHERE endpoint = ?';
-            db.query(deleteQuery, [subscription.endpoint], (deleteErr) => {
-              if (deleteErr) console.error('Error removing expired subscription:', deleteErr);
-            });
-          }
-        });
+      .sendNotification(pushSubscription, notificationPayload)
+      .catch((error) => {
+        console.error('Error sending notification:', error);
+    
+        if (error.statusCode === 410) {
+          console.log('Subscription revoked but not deleted:', subscription.endpoint);
+          // Log the revoked subscription for later review but do not delete it
+        }
+      });
+    
     });
 
     // Wait for all notifications to be sent
