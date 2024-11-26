@@ -294,46 +294,45 @@ webPush.setVapidDetails(
   });
 
   // Endpoint to save a subscription
-// Endpoint to save a subscription
-app.post('/api/subscribe', (req, res) => {
-  console.log('Request body:', req.body); // Log the request body for debugging
-
-  const { endpoint, keys } = req.body;
-
-  if (!endpoint || !keys) {
-    return res.status(400).send({ success: false, message: 'Invalid subscription data' });
-  }
-
-  const { p256dh, auth } = keys;
-
-  const query = 'INSERT INTO subscriptions (endpoint, p256dh, auth) VALUES (?, ?, ?)';
-  db.query(query, [endpoint, p256dh, auth], (err) => {
-    if (err) {
-      console.error('Error saving subscription:', err);
-      return res.status(500).send({ success: false });
+  app.post('/api/subscribe', (req, res) => {
+    const { endpoint, keys, country } = req.body;
+  
+    if (!endpoint || !keys) {
+      return res.status(400).send({ success: false, message: 'Invalid subscription data' });
     }
-    res.status(201).send({ success: true });
+  
+    const { p256dh, auth } = keys;
+  
+    // Save subscription with country to the database
+    const query = `
+      INSERT INTO subscriptions (endpoint, p256dh, auth, country)
+      VALUES (?, ?, ?, ?)
+      ON DUPLICATE KEY UPDATE p256dh = VALUES(p256dh), auth = VALUES(auth), country = VALUES(country)
+    `;
+    db.query(query, [endpoint, p256dh, auth, country], (err) => {
+      if (err) {
+        console.error('Error saving subscription:', err);
+        return res.status(500).send({ success: false, message: 'Database error' });
+      }
+      res.status(201).send({ success: true });
+    });
   });
-});
+  
 
 // Endpoint to send notifications
 app.post('/api/send-notifications', (req, res) => {
-  const { payload } = req.body;
+  const { payload, countries } = req.body;
 
-  if (!payload || !payload.title || !payload.body) {
-    return res.status(400).send({ success: false, message: 'Payload with title and body is required' });
+  if (!payload) {
+    return res.status(400).send({ success: false, message: 'Payload is required' });
   }
 
-  const notificationPayload = JSON.stringify({
-    title: payload.title,
-    body: payload.body,
-    icon: payload.icon || '/icon.png',
-    url: payload.url || '/',
-  });
+  // Query for subscriptions based on countries or all users
+  const query = countries && countries.length > 0
+    ? 'SELECT * FROM subscriptions WHERE country IN (?)'
+    : 'SELECT * FROM subscriptions';
 
-  // Retrieve all subscriptions from the database
-  const query = 'SELECT * FROM subscriptions';
-  db.query(query, (err, results) => {
+  db.query(query, [countries], (err, results) => {
     if (err) {
       console.error('Error fetching subscriptions:', err);
       return res.status(500).send({ success: false, message: 'Failed to fetch subscriptions' });
@@ -349,42 +348,17 @@ app.post('/api/send-notifications', (req, res) => {
       };
 
       return webPush
-      .sendNotification(pushSubscription, notificationPayload)
-      .catch((error) => {
-        console.error('Error sending notification:', error);
-    
-        if (error.statusCode === 410) {
-          console.log('Subscription revoked but not deleted:', subscription.endpoint);
-          // Log the revoked subscription for later review but do not delete it
-        }
-      });
-    
+        .sendNotification(pushSubscription, JSON.stringify(payload))
+        .catch((error) => {
+          console.error('Error sending notification:', error);
+        });
     });
 
-    // Wait for all notifications to be sent
     Promise.all(sendPromises)
-      .then(() => {
-        // Save the campaign to the database
-        const saveCampaignQuery = `
-          INSERT INTO campaigns (title, body, icon, url, createdAt)
-          VALUES (?, ?, ?, ?, NOW())
-        `;
-        db.query(
-          saveCampaignQuery,
-          [payload.title, payload.body, payload.icon || '/icon.png', payload.url || '/'],
-          (saveErr) => {
-            if (saveErr) {
-              console.error('Error saving campaign:', saveErr);
-              return res.status(500).send({ success: false, message: 'Failed to save campaign' });
-            }
-
-            res.status(200).send({ success: true, message: 'Notifications sent and campaign saved successfully' });
-          }
-        );
-      })
+      .then(() => res.status(200).send({ success: true, message: 'Notifications sent' }))
       .catch((err) => {
         console.error('Error sending notifications:', err);
-        res.status(500).send({ success: false, message: 'Failed to send some notifications' });
+        res.status(500).send({ success: false, message: 'Failed to send notifications' });
       });
   });
 });
@@ -432,6 +406,21 @@ app.get('/api/campaigns', (req, res) => {
     res.json(results);
   });
 });
+
+app.get('/api/countries', (req, res) => {
+  const query = 'SELECT DISTINCT country FROM subscriptions';
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching countries:', err);
+      return res.status(500).send({ success: false, message: 'Failed to fetch countries' });
+    }
+
+    const countries = results.map((row) => row.country).filter(Boolean); // Filter out null/undefined
+    res.json(countries);
+  });
+});
+
 
 
 app.post('/api/campaigns/resend/:id', (req, res) => {

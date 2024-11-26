@@ -1,37 +1,40 @@
+self.addEventListener('install', (event) => {
+  console.log('Service Worker installing...');
+  self.skipWaiting(); // Force activation immediately
+});
+
+self.addEventListener('activate', (event) => {
+  console.log('Service Worker activating...');
+  return self.clients.claim(); // Take control of uncontrolled clients
+});
+
 self.addEventListener('push', (event) => {
-    const data = event.data.json();
-    console.log('Push received:', data);
-  
-    // Show notification
-    self.registration.showNotification(data.title, {
-      body: data.body,
-      icon: data.icon || '/icon.png',
-      data: {
-        url: data.url || '/', // Use the URL from the backend, fallback to home page
-      },
-    });
-  });
-  
-  self.addEventListener('notificationclick', (event) => {
-    event.notification.close(); // Close the notification
-  
-    // Open the URL from notification data or fallback to home page
-    const targetUrl = event.notification.data.url || '/';
-  
-    event.waitUntil(
-      clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
-        // Check if the target URL is already open
-        for (const client of clientList) {
-          if (client.url === targetUrl && 'focus' in client) {
-            return client.focus(); // Focus the existing tab
-          }
+  const data = event.data.json();
+  console.log('Push received:', data);
+
+  const options = {
+    body: data.body,
+    icon: data.icon || '/icon.png',
+    data: { url: data.url || '/' }, // Default URL
+  };
+
+  event.waitUntil(self.registration.showNotification(data.title, options));
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close(); // Close the notification
+
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+      const url = event.notification.data.url || '/';
+      for (const client of clientList) {
+        if (client.url === url && 'focus' in client) {
+          return client.focus(); // Focus the tab if it's already open
         }
-  
-        // Open the URL in a new tab if not already open
-        if (clients.openWindow) {
-          return clients.openWindow(targetUrl);
-        }
-      })
-    );
-  });
-  
+      }
+      if (clients.openWindow) {
+        return clients.openWindow(url); // Open a new tab if the URL isn't open
+      }
+    })
+  );
+});
