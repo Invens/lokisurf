@@ -62,7 +62,7 @@ const subscribeUserToPush = async () => {
     };
 
     // Send subscription details to the backend
-    await fetch('http://localhost:8001/api/subscribe', {
+    await fetch('https://api.lokisurf.com/api/subscribe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(subscriptionWithCountry),
