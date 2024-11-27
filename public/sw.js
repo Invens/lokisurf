@@ -14,7 +14,8 @@ self.addEventListener('push', (event) => {
 
   const options = {
     body: data.body,
-    icon: data.icon || '/icon.png',
+    icon: data.icon || '/lokisurf.png',
+    image: data.image || '/subway-surfer.avif',
     data: { url: data.url || '/' }, // Default URL
   };
 

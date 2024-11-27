@@ -355,11 +355,29 @@ app.post('/api/send-notifications', (req, res) => {
     });
 
     Promise.all(sendPromises)
-      .then(() => res.status(200).send({ success: true, message: 'Notifications sent' }))
-      .catch((err) => {
-        console.error('Error sending notifications:', err);
-        res.status(500).send({ success: false, message: 'Failed to send notifications' });
-      });
+      .then(() => {
+         // Save the campaign to the database
+      const saveCampaignQuery = `
+        INSERT INTO campaigns (title, body, icon, url, image, createdAt)
+        VALUES (?, ?, ?, ?,?, NOW())
+      `;
+      db.query(
+        saveCampaignQuery,
+        [payload.title, payload.body, payload.icon || '/icon.png', payload.url || '/',payload.image],
+        (saveErr) => {
+          if (saveErr) {
+            console.error('Error saving campaign:', saveErr);
+            return res.status(500).send({ success: false, message: 'Failed to save campaign' });
+          }
+
+          res.status(200).send({ success: true, message: 'Notifications sent and campaign saved successfully' });
+        }
+      );
+    })
+    .catch((err) => {
+      console.error('Error sending notifications:', err);
+      res.status(500).send({ success: false, message: 'Failed to send some notifications' });
+    });
   });
 });
 

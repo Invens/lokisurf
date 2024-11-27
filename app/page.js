@@ -7,7 +7,7 @@ import Pagination from "../components/pagination";
 import Header from "@/components/header/page";
 import Footer from "../components/footer/footer";
 import Bfooter from "@/components/footer/b-footer";
-import { subscribeUserToPush } from "@/components/NotificationButton";
+// import { subscribeUserToPush } from "@/components/NotificationButton";
 
 export default function Home() {
   const [games, setGames] = useState([]);
@@ -18,12 +18,12 @@ export default function Home() {
 
 
   useEffect(() => {
-    if (typeof window !== "undefined" && "Notification" in window) {
-      setIsNotificationEnabled(Notification.permission === "granted");
-      if (Notification.permission === "default") {
-        setShowNotificationPrompt(true);
-      }
-    }
+    // if (typeof window !== "undefined" && "Notification" in window) {
+    //   setIsNotificationEnabled(Notification.permission === "granted");
+    //   if (Notification.permission === "default") {
+    //     setShowNotificationPrompt(true);
+    //   }
+    // }
 
 
     const fetchData = async () => {
@@ -151,26 +151,26 @@ export default function Home() {
   }, []);
 
    // Handle enabling notifications
-   const handleEnableNotifications = async () => {
-    try {
-      const permission = await Notification.requestPermission();
-      if (permission === "granted") {
-        await subscribeUserToPush();
-        setIsNotificationEnabled(true);
-        setShowNotificationPrompt(false);
-        alert("Notifications enabled successfully!");
-      } else {
-        alert("Notifications permission denied.");
-      }
-    } catch (error) {
-      console.error("Error enabling notifications:", error);
-      alert("Failed to enable notifications. Please try again.");
-    }
-  };
-  const handleDeclineNotifications = () => {
-    setShowNotificationPrompt(false);
-    alert("You can enable notifications later in your browser settings.");
-  };
+  //  const handleEnableNotifications = async () => {
+  //   try {
+  //     const permission = await Notification.requestPermission();
+  //     if (permission === "granted") {
+  //       await subscribeUserToPush();
+  //       setIsNotificationEnabled(true);
+  //       setShowNotificationPrompt(false);
+  //       alert("Notifications enabled successfully!");
+  //     } else {
+  //       alert("Notifications permission denied.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error enabling notifications:", error);
+  //     alert("Failed to enable notifications. Please try again.");
+  //   }
+  // };
+  // const handleDeclineNotifications = () => {
+  //   setShowNotificationPrompt(false);
+  //   alert("You can enable notifications later in your browser settings.");
+  // };
 
   // Calculate the games to display on the current page
   const indexOfLastGame = currentPage * gamesPerPage;
@@ -184,7 +184,7 @@ export default function Home() {
     <>
     <div>
       <Layout>
-        {showNotificationPrompt && !isNotificationEnabled && (
+        {/* {showNotificationPrompt && !isNotificationEnabled && (
           <div
             style={{
               position: "fixed",
@@ -231,7 +231,7 @@ export default function Home() {
               No Thanks
             </button>
           </div>
-        )}
+        )} */}
 
         {games.length > 0 ? (
           <>

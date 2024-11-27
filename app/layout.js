@@ -5,6 +5,7 @@ import Head from "next/head";
 import ClientWrapper from "@/components/ClientWrapper";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import NotificationPermission from "@/components/NotificationButton";
 const audiowide = Audiowide({ subsets: ["latin"], weight: "400" });
 
 export default function RootLayout({ children }) {
@@ -37,6 +38,7 @@ export default function RootLayout({ children }) {
       </Head>
       <body className={audiowide.className}>
         <ClientWrapper>
+        <NotificationPermission />
           {children}
         </ClientWrapper>
       </body>
