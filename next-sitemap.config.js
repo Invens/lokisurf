@@ -1,16 +1,21 @@
-// next-sitemap.config.js
-
 module.exports = {
-    siteUrl: 'https://www.lokisurf.com', // Replace with your site's URL
-    generateRobotsTxt: true, // (optional) Generate a robots.txt file
-    sitemapSize: 7000, // (optional) Limit the number of URLs per sitemap file
-    changefreq: 'daily', // (optional) Change frequency
-    priority: 0.7, // (optional) Default priority for pages
-    exclude: ['/admin/**', '/private/**'], // (optional) Exclude specific paths
-    robotsTxtOptions: {
-      additionalSitemaps: [
-        'https://www.lokisurf.com/my-custom-sitemap.xml',
-      ],
-    },
-  }
-  
+  siteUrl: 'https://www.lokisurf.com',
+  generateRobotsTxt: true,
+  sitemapSize: 50000, // Reduce sitemap size if errors persist
+  changefreq: 'daily',
+  priority: 0.7,
+  exclude: ['/admin/**', '/private/**'],
+  robotsTxtOptions: {
+    additionalSitemaps: [
+      'https://www.lokisurf.com/my-custom-sitemap.xml',
+    ],
+  },
+  transform: async (config, url) => {
+    return {
+      loc: url.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'), // Escape special characters
+      lastmod: new Date().toISOString(),
+      changefreq: 'daily',
+      priority: 0.7,
+    };
+  },
+};
